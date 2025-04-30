@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
-import Pagination from "./pagination";
-import SearchStatus from "./searchStatus";
+import Pagination from "../components/pagination";
+import SearchStatus from "../components/searchStatus";
 import { paginate } from "../utils/paginate";
-import GroupeList from "./groupeList";
+import GroupeList from "../components/groupeList";
 import API from "../api";
-import UsersTable from "./usersTable";
+import UsersTable from "../components/usersTable";
 import _ from "lodash";
 
 const Users = () => {
   const pageSize = 8;
+  const [searchQuery, setSearchQuery] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [professions, setProfessions] = useState();
   const [selectedProf, setSelectedProf] = useState();
@@ -56,8 +57,17 @@ const Users = () => {
     setSortBy(item);
   };
 
+  const handleSearchQuery = ({ target }) => {
+    setSearchQuery(target.value);
+  };
+
   if (users) {
-    const flteredUsers = selectedProf
+    const flteredUsers = searchQuery
+      ? users.filter(
+          (user) =>
+            user.name.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1
+        )
+      : selectedProf
       ? users.filter((user) => user.profession._id === selectedProf._id)
       : users;
 
@@ -86,6 +96,17 @@ const Users = () => {
 
         <div className="d-flex flex-column">
           <SearchStatus length={count} />
+
+          <input
+            className="w-100"
+            id="search"
+            name="search"
+            type="text"
+            value={searchQuery}
+            placeholder="Search..."
+            onChange={handleSearchQuery}
+          />
+
           {count > 0 && (
             <UsersTable
               users={userCrop}
@@ -107,11 +128,7 @@ const Users = () => {
       </div>
     );
   }
-  return (
-    <h2>
-      Loading...
-    </h2>
-  );
+  return <h2>Loading...</h2>;
 };
 
 export default Users;
