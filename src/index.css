@@ -11,3 +11,12 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+.list-group {
+  cursor: pointer;
+}
+
+th:not(:nth-of-type(2)) {
+  cursor: pointer;
+}

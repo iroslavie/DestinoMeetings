@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import API from "../api";
-import Qualitie from "./qualitie";
+import API from "../../../api";
+import Qualitie from "../../ui/qualities/qualitie";
 
 const UserPage = () => {
   const { userId } = useParams();
@@ -31,7 +31,7 @@ const UserPage = () => {
       <p>Встретился, раз: {user.completedMeetings}</p>
       <h2>Рейтинг: {user.rate}</h2>
 
-      <button onClick={() => navigate('/users')}>Все пользователи</button>
+      <button onClick={() => navigate("/users")}>Все пользователи</button>
     </div>
   );
 };
