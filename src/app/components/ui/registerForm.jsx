@@ -2,14 +2,27 @@ import React, { useEffect, useState } from "react";
 import { validator } from "../../utils/validator";
 import TextField from "../common/form/textField";
 import API from "../../api";
+import SelectField from "../common/form/selectField";
+import RadioField from "../common/form/radioField";
+import MultiSelectField from "../common/form/multiSelectField";
+import CheckBoxField from "../common/form/checkBoxField";
 
 const RegisterForm = () => {
-  const [data, setData] = useState({ email: "", password: "" });
+  const [data, setData] = useState({
+    email: "",
+    password: "",
+    profession: "",
+    sex: "male",
+    qualities: [],
+    licence: false,
+  });
   const [errors, setErrors] = useState({});
-  const [professions, setProfessions] = useState();
+  const [professions, setProfessions] = useState([]);
+  const [qualities, setQualities] = useState({});
 
   useEffect(() => {
     API.professions.fetchAll().then((data) => setProfessions(data));
+    API.qualities.fetchAll().then((data) => setQualities(data));
   }, []);
 
   const validatorConfig = {
@@ -28,6 +41,17 @@ const RegisterForm = () => {
         value: 8,
       },
     },
+    profession: {
+      isRequired: {
+        message: "Обязательно выберите Вашу профессию",
+      },
+    },
+    licence: {
+      isRequired: {
+        message:
+          "Вы не можете использовать наш сервис без подтверждения лицензионного соглашения",
+      },
+    },
   };
 
   const validate = () => {
@@ -36,7 +60,7 @@ const RegisterForm = () => {
     return Object.keys(errors).length === 0 || false;
   };
 
-  const handleChange = ({ target }) => {
+  const handleChange = (target) => {
     setData((prevState) => ({ ...prevState, [target.name]: target.value }));
   };
 
@@ -70,19 +94,39 @@ const RegisterForm = () => {
         onChange={handleChange}
         error={errors.password}
       />
-      <div className="mb-4">
-        <label htmlFor="validationCustom04" className="form-label">
-          State
-        </label>
-        <select className="form-select" id="validationCustom04" required>
-          <option selected disabled value="">
-            Choose...
-          </option>
-          {professions.map(profession => <option ></option>)}
-          <option>...</option>
-        </select>
-        <div className="invalid-feedback">Please select a valid state.</div>
-      </div>
+      <SelectField
+        label="Выберите вашу профессию:"
+        defaultOption="Choose..."
+        options={professions}
+        onChange={handleChange}
+        value={data.profession}
+        error={errors.profession}
+      />
+      <RadioField
+        options={[
+          { name: "Male", value: "male" },
+          { name: "Female", value: "female" },
+          { name: "Other", value: "other" },
+        ]}
+        value={data.sex}
+        name="sex"
+        onChange={handleChange}
+        label="Выберите ваш пол:"
+      />
+      <MultiSelectField
+        options={qualities}
+        onChange={handleChange}
+        name="qualities"
+        label="Выберите ваши характеристики:"
+      />
+      <CheckBoxField
+        value={data.licence}
+        onChange={handleChange}
+        name="licence"
+        error={errors.licence}
+      >
+        Подтвердить <a>лицензионное соглашение</a>
+      </CheckBoxField>
       <button
         type="submit"
         disabled={!isValid}

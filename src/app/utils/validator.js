@@ -1,38 +1,51 @@
 export function validator(data, config) {
-    const errors = {};
-    function validate(validateMethod, data, config) {
-      let statusValidate = 0;
-      switch (validateMethod) {
-        case "isRequired":
-          statusValidate = data.trim() === "";
-          break;
-        case "isEmail": {
-          const emailregExp = /^\S+@\S+\.\S+$/g;
-          statusValidate = !emailregExp.test(data);
-          break;
-        }
-        case "isCapitalSymbol": {
-          const capitalRegExp = /[A-Z]+/g;
-          statusValidate = !capitalRegExp.test(data);
-          break;
-        }
-        case "isContainDigit": {
-          const digitRegExp = /\d+/g;
-          statusValidate = !digitRegExp.test(data);
-          break;
-        }
-        case "min": {
-          statusValidate = data.length < config.value;
-          break;
-        }
-  
-        default:
-          break;
-      }
-      if (statusValidate) return config.message;
+  const errors = {};
+
+  function validate(validateMethod, data, config) {
+    if (data === undefined || data === null) {
+      return config.message;
     }
-  
-    for (const fieldName in data) {
+
+    let statusValidate = false;
+    const stringData = String(data);
+
+    switch (validateMethod) {
+      case "isRequired": {
+        if (typeof data === "boolean") {
+          statusValidate = !data;
+        } else {
+          statusValidate = stringData.trim() === "";
+          break;
+        }
+      }
+      case "isEmail": {
+        const emailRegExp = /^\S+@\S+\.\S+$/g;
+        statusValidate = !emailRegExp.test(stringData);
+        break;
+      }
+      case "isCapitalSymbol": {
+        const capitalRegExp = /[A-Z]+/g;
+        statusValidate = !capitalRegExp.test(stringData);
+        break;
+      }
+      case "isContainDigit": {
+        const digitRegExp = /\d+/g;
+        statusValidate = !digitRegExp.test(stringData);
+        break;
+      }
+      case "min": {
+        statusValidate = stringData.length < config.value;
+        break;
+      }
+      default:
+        break;
+    }
+
+    if (statusValidate) return config.message;
+  }
+
+  for (const fieldName in data) {
+    if (config[fieldName]) {
       for (const validateMethod in config[fieldName]) {
         const error = validate(
           validateMethod,
@@ -44,6 +57,7 @@ export function validator(data, config) {
         }
       }
     }
-    return errors;
   }
-  
+
+  return errors;
+}

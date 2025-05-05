@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 
-const TetxField = ({ label, type = "text", name, value, onChange, error }) => {
+const TextField = ({ label, type = "text", name, value='', onChange, error }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const getInputClasses = () => {
@@ -10,6 +10,10 @@ const TetxField = ({ label, type = "text", name, value, onChange, error }) => {
 
   const toggleShowPassword = () => {
     setShowPassword((prevState) => !prevState);
+  };
+
+  const handleChange = ({ target }) => {
+    onChange({ name: target.name, value: target.value });
   };
 
   return (
@@ -21,7 +25,7 @@ const TetxField = ({ label, type = "text", name, value, onChange, error }) => {
           id={name}
           name={name}
           value={value}
-          onChange={onChange}
+          onChange={handleChange}
           className={getInputClasses()}
         />
         {type === "password" && (
@@ -39,13 +43,13 @@ const TetxField = ({ label, type = "text", name, value, onChange, error }) => {
   );
 };
 
-TetxField.propTypes = {
+TextField.propTypes = {
   label: PropTypes.string,
   type: PropTypes.string,
-  name: PropTypes.string,
+  name: PropTypes.string.isRequired,
   value: PropTypes.string,
-  onChange: PropTypes.func,
-  error: PropTypes.func,
+  onChange: PropTypes.func.isRequired,
+  error: PropTypes.string,
 };
 
-export default TetxField;
+export default TextField;
