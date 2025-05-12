@@ -1,39 +1,66 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
 import API from "../../../api";
-import Qualitie from "../../ui/qualities/qualitie";
+import PropTypes from "prop-types";
+import UserCard from "../../ui/userCard";
+import QualitiesCard from "../../ui/qualitiesCard";
+import MeetingsCard from "../../ui/meetingsCard";
+import Comments from "../../ui/comments";
 
-const UserPage = () => {
-  const { userId } = useParams();
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+const UserPage = ({ userId }) => {
+  const [user, setUser] = useState();
 
   useEffect(() => {
-    API.users.getById(userId).then((data) => {
-      setUser(data);
-      setLoading(false);
-    });
-  }, [userId]);
+    API.users.getById(userId).then((data) => setUser(data));
+  }, []);
 
-  if (loading || !user) return <h2>Loading...</h2>;
+  if (user) {
+    return (
+      <div className="container">
+        <div className="row gutters-sm">
+          <div className="col-md-4 mb-3">
+            <UserCard user={user} />
+            <QualitiesCard data={user.qualities} />
+            <MeetingsCard value={user.completedMeetings} />
+          </div>
+          <div className="col-md-8">
+            <Comments />
+          </div>
+        </div>
+      </div>
+    );
+  } else {
+    return <h1>Loading...</h1>;
+  }
+};
+//   const { userId } = useParams();
 
-  return (
-    <div>
-      <h1>{user.name}</h1>
-      <h2>Профессия: {user.profession.name}</h2>
-      <p>Качества:</p>
-      <ul>
-        {user.qualities.map((q) => (
-          <Qualitie key={q._id} {...q} />
-        ))}
-      </ul>
-      <p>Встретился, раз: {user.completedMeetings}</p>
-      <h2>Рейтинг: {user.rate}</h2>
+//   const [loading, setLoading] = useState(true);
+//   const navigate = useNavigate();
 
-      <button onClick={() => navigate("/users")}>Все пользователи</button>
-    </div>
-  );
+//   if (loading || !user) return <h2>Loading...</h2>;
+
+//   return (
+//     <div>
+//       <h1>{user.name}</h1>
+//       <h2>Профессия: {user.profession.name}</h2>
+//       <p>Качества:</p>
+//       <ul>
+//         {user.qualities.map((q) => (
+//           <Qualitie key={q._id} {...q} />
+//         ))}
+//       </ul>
+//       <p>Встретился, раз: {user.completedMeetings}</p>
+//       <h2>Рейтинг: {user.rate}</h2>
+
+//       <button onClick={() => navigate(`/users/${userId}/edit`)}>
+//         Изменить
+//       </button>
+//     </div>
+//   );
+// };
+
+UserPage.propTypes = {
+  userId: PropTypes.string.isRequired,
 };
 
 export default UserPage;

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 
-const TextField = ({ label, type = "text", name, value='', onChange, error }) => {
+const TextField = ({ label, type = "text", name, value='', onChange, error=null }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const getInputClasses = () => {
